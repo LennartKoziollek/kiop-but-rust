@@ -1,4 +1,4 @@
-use crate::Expression::Expression;
+use crate::{Expression::Expression, Error::Error};
 
 #[derive(Debug)]
 pub struct Variable {
@@ -12,9 +12,8 @@ impl Variable {
 }
 
 impl<'a> Expression<'a> for Variable {
-    fn free_identifiers(&'a self) -> Vec<&'a Self> {
-        let free_identifiers: Vec<&Variable> = vec![self];
-        free_identifiers
+    fn free_identifiers(&'a self) -> Result<Vec<&'a Self>,Error> {
+        Err(Error::FreeIdentifiers)
     }
 
     fn reduce(&self) {} //empty because you cant to anything to reduce vars
