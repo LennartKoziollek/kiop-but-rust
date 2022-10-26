@@ -17,5 +17,5 @@ impl<'a> Expression<'a> for Variable {
         free_identifiers
     }
 
-    fn reduce(&self) {}
+    fn reduce(&self) {} //empty because you cant to anything to reduce vars
 }
