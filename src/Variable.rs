@@ -1,6 +1,10 @@
-use crate::{Expression::Expression, Error::Error};
+use std::fmt::Display;
 
-#[derive(Debug)]
+use crate::{
+    Error::Error,
+    Expression::{Expression, ExpressionType},
+};
+
 pub struct Variable {
     name: String,
 }
@@ -12,9 +16,21 @@ impl Variable {
 }
 
 impl<'a> Expression<'a> for Variable {
-    fn free_identifiers(&'a self) -> Result<Vec<&'a Self>,Error> {
+    fn free_identifiers(&'a self) -> Result<Vec<&'a Self>, Error> {
         Err(Error::FreeIdentifiers)
     }
 
-    fn reduce(&self) {} //empty because you cant to anything to reduce vars
+    fn reduce(&mut self) -> Result<(), Error>{
+        Err(Error::CantReduceVariable)
+    } //empty because you cant to anything to reduce vars
+
+    fn get_type(&self) -> crate::Expression::ExpressionType {
+        ExpressionType::Variable
+    }
+}
+
+impl Display for Variable {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name)
+    }
 }

@@ -1,21 +1,40 @@
-use crate::{Error::Error, Expression::Expression, Variable::Variable};
+use std::fmt::Display;
 
-//rust things here lol
+use crate::{
+    Error::Error,
+    Expression::{Expression, ExpressionType},
+    Variable::Variable,
+};
+
 struct Application<'a> {
     left: &'a dyn Expression<'a>,
     right: &'a dyn Expression<'a>,
 }
 
-impl<'a> Application<'a> {
+impl<'a> Expression<'a> for Application<'a> {
     fn free_identifiers(&'a self) -> Result<Vec<&'a Variable>, Error> {
-        Err(Error::FreeIdentifiers)
+        let mut vec = self.left.free_identifiers()?;
+        vec.append(&mut self.right.free_identifiers()?);
+        Ok(vec)
     }
 
-    fn reduce(&self) {}
+    fn reduce(&mut self) -> Result<(), Error> {
+        if let ExpressionType::Abstraction = self.left.get_type() {
+            // return ((Abstraction) left).apply(right);
+            Ok(()) //TODO logic here
+        } else {
+            Err(Error::LeftNotExpression)
+        }
+    }
+
+    fn get_type(&self) -> ExpressionType {
+        ExpressionType::Application
+    }
 }
 
-impl<'a> Application<'a> {
-    pub fn apply() {
 
+impl<'a> Display for Application<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({} {})", self.left, self.right)
     }
 }

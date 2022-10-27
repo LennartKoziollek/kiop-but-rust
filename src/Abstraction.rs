@@ -1,10 +1,12 @@
-use crate::{Expression::Expression, Error::Error};
+use std::fmt::Display;
+
+use crate::{Expression::{Expression, ExpressionType}, Error::Error};
 
 
 
 struct Abstraction<'a> {
     header: String,
-    body: &'a dyn Expression<'a>,
+    body: &'a dyn Expression<'a>, // do i really need pointers here? because this should be owned i think
 }
 
 impl<'a> Expression<'a> for Abstraction<'a> {
@@ -12,7 +14,21 @@ impl<'a> Expression<'a> for Abstraction<'a> {
         //here has to be actual logic
         Err(Error::FreeIdentifiers)
     }
-    fn reduce(&self) {
-       //actual logic here aswell 
+    fn reduce(&mut self) -> Result<(), Error> {
+       Err(Error::CantReduceAbstraction)
+    }
+
+    fn get_type(&self) -> crate::Expression::ExpressionType {
+        ExpressionType::Abstraction
+    }
+}
+
+impl<'a> Abstraction<'a> {
+    fn apply() {}
+}
+
+impl<'a> Display for Abstraction<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "(Lambda{}.{})", self.header, self.body)
     }
 }
